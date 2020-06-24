@@ -1,6 +1,7 @@
 'use strict';
 
 const angular = require('angular');
+const utils = require('./utils')
 require("./styles.css");
 
 angular
@@ -12,7 +13,6 @@ angular
     $scope.tab = $state.params.tab;
     $scope.project = projectService;
     $scope.codeService = codeService;
-
     $scope.versions = {}
 
     $scope.copied = false;
@@ -28,7 +28,10 @@ angular
 
     $scope.model = {};
     projectService.ready(function(project) {
-        $scope.model = project.nodes[$scope.model_uid];
+        let mod = project.nodes[$scope.model_uid];
+        $scope.model = mod;
+        $scope.references = utils.getReferences(project, mod);
+        $scope.parents = utils.getParents(project, mod);
 
         var default_compiled = '\n-- compiled SQL not found for this model\n';
         $scope.versions = {
