@@ -51,15 +51,17 @@
             <div class='app-body' ng-show='!search.is_focused' ui-view></div>
             <div class="app-body" ng-show="search.is_focused">
                 <docs-search query="search.query" results="search.results" on-select="clearSearch()"></docs-search>
-                <label for="myCheck1" >Name:</label> 
-                <input type="checkbox" id="myCheck1" ng-model="checkboxStatus.show_names" ng-click="filterResults(results, checkboxStatus)" style="margin-right:25px;">
-                <label for="myCheck2" >Description:</label> 
-                <input type="checkbox" id="myCheck2" ng-model="checkboxStatus.show_descriptions" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
-                <label for="myCheck3" >Column:</label> 
-                <input type="checkbox" id="myCheck3" ng-model="checkboxStatus.show_columns" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
-                <label for="myCheck4" >SQL:</label> 
-                <input type="checkbox" id="myCheck4" ng-model="checkboxStatus.show_code" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
-                <label >To use filters, click desired filters, then search desired result.</label>
+                <div class = "sub-results">
+                    <label for="myCheck1" style = "margin-left:60px">Name:</label> 
+                    <input type="checkbox" id="myCheck1" ng-model="checkboxStatus.show_names" ng-click="filterResults(results, checkboxStatus)" style="margin-right:25px">
+                    <label for="myCheck2" >Description:</label> 
+                    <input type="checkbox" id="myCheck2" ng-model="checkboxStatus.show_descriptions" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
+                    <label for="myCheck3" >Column:</label> 
+                    <input type="checkbox" id="myCheck3" ng-model="checkboxStatus.show_columns" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
+                    <label for="myCheck4" >SQL:</label> 
+                    <input type="checkbox" id="myCheck4" ng-model="checkboxStatus.show_code" ng-click = "filterResults(results, checkboxStatus)" style="margin-right:25px;">
+                    <label >To use filters, click desired filters, then search desired result.</label>
+                </div>
             </div>
         </div>
     </div>
