@@ -35,6 +35,13 @@ angular
     $scope.model_uid = null;
     $scope.project = {};
 
+    $scope.checkboxStatus = {
+        show_names : false,
+        show_descriptions: false,
+        show_columns: false,
+        show_code: false
+    };
+
     $('body').bind('keydown', function(e) {
         if (event.key == 't' && event.target.tagName != 'INPUT') {
             console.log("Opening search");
@@ -142,8 +149,61 @@ angular
         }
     });
 
+    $scope.filterResults = function (results, checkboxStatus){
+        if(checkboxStatus.show_names == false && checkboxStatus.show_descriptions == false && checkboxStatus.show_columns == false && checkboxStatus.show_code == false){
+            return results;
+        }
+
+        let index;
+        let index2;
+        let resultsWithNameFilter = []
+        let resultsWithDescriptionFilter = [];
+        let resultsWithColumnFilter = [];
+        let resultsWithCodeFilter = [];
+        let finalResults = [];
+        
+        let fileIDs = [];
+
+        for(index = 0; index < results.length; index++){
+            for(index2 = 0; index2 < results[index].matches.length; index2++){
+                if (checkboxStatus.show_names==true && results[index].matches[index2].key === "name" && !fileIDs.includes(results[index].model['unique_id'])){
+                    fileIDs.push(results[index].model['unique_id']);
+                    resultsWithNameFilter.push(results[index]);
+                }
+                else if (checkboxStatus.show_descriptions==true && results[index].matches[index2].key === "description" && !fileIDs.includes(results[index].model['unique_id'])){
+                    fileIDs.push(results[index].model['unique_id']);
+                    resultsWithDescriptionFilter.push(results[index]);
+                }
+                else if (checkboxStatus.show_columns==true && results[index].matches[index2].key === "columns" && !fileIDs.includes(results[index].model['unique_id'])){
+                    fileIDs.push(results[index].model['unique_id']);
+                    resultsWithColumnFilter.push(results[index])
+                }
+            }
+            // console.log(results[index].model['raw_sql'].search($scope.search.query));
+            // console.log(results[index].model['raw_sql'].search($scope.search.query)!=-1);
+            // console.log("*result itself*\n", results[index])
+            // console.log("*raw_sql of result*\n", results[index].model['raw_sql']);
+            // if(results[index].model['fqn'][2] != "seeds")
+            //     console.log("*index of search found*\n", results[index].model['raw_sql'].search($scope.search.query));
+            if (checkboxStatus.show_code==true && results[index].model['resource_type'] != "source" && results[index].model['raw_sql'].search($scope.search.query)!=-1 && !fileIDs.includes(results[index].model['unique_id'])){
+                console.log("we found a code match\n", results[index].model['raw_sql']);
+                fileIDs.push(results[index].model['unique_id']);
+                resultsWithCodeFilter.push(results[index]);
+                
+            }
+       }
+       console.log("*resultsWithNameFilter*\n", resultsWithNameFilter);
+       console.log("*resultsWithDescriptionFilter*\n", resultsWithDescriptionFilter);
+       console.log("*resultsWithColumnFilter*\n", resultsWithCodeFilter);
+       console.log("*resultsWithCodeFilter*", resultsWithCodeFilter);
+       var ret = finalResults.concat(resultsWithNameFilter, resultsWithDescriptionFilter, resultsWithColumnFilter, resultsWithCodeFilter);
+       console.log("*ret*", ret);
+       return ret;
+    }
     $scope.$watch('search.query', function(q) {
-        $scope.search.results = projectService.search(q);
+        //$scope.search.results = projectService.search(q);
+        let filteredResults = $scope.filterResults(projectService.search(q), $scope.checkboxStatus);
+        $scope.search.results = filteredResults;
     });
 
 
