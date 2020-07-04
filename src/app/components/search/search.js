@@ -19,27 +19,6 @@ angular
             scope.show_all = false;
             scope.max_results_columns = 3;
             scope.limit_columns = {};
-            //variables related to search function filters
-            scope.arrayOfChecked = {
-                show_names : false,
-                show_descriptions: false,
-                show_columns: false,
-                show_code: false
-            };
-            // scope.names_array = [];
-            // scope.descriptions_array = [];
-            // scope.columns_array = [];
-            // scope.code_array = [];
-
-            scope.myFunction = function () {
-                scope.show_names = !scope.show_names;
-            }
-
-            // scope.addValuesToArrays = function (nameVal, descVal, colVal){
-            //     scope.names_array.push(nameVal);
-            //     scope.descriptions_array.push(descVal);
-            //     scope.columns_array.push(colVal);
-            // }
 
             scope.limit_search = function(res, index, results) {
                 return (index < scope.max_results || scope.show_all);

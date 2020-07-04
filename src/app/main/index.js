@@ -150,62 +150,42 @@ angular
     });
 
     $scope.filterResults = function (results, checkboxStatus){
-        if(checkboxStatus.show_names == false && checkboxStatus.show_descriptions == false && checkboxStatus.show_columns == false && checkboxStatus.show_code == false){
+        if(!_.some(_.values(checkboxStatus))){
             return results;
         }
 
-        let index;
-        let index2;
-        let resultsWithNameFilter = []
-        let resultsWithDescriptionFilter = [];
-        let resultsWithColumnFilter = [];
-        let resultsWithCodeFilter = [];
         let finalResults = [];
-        
         let fileIDs = [];
 
-        for(index = 0; index < results.length; index++){
-            for(index2 = 0; index2 < results[index].matches.length; index2++){
-                if (checkboxStatus.show_names==true && results[index].matches[index2].key === "name" && !fileIDs.includes(results[index].model['unique_id'])){
-                    fileIDs.push(results[index].model['unique_id']);
-                    resultsWithNameFilter.push(results[index]);
+        _.each(results, function(result){
+            _.each(result.matches, function(match){
+                if (checkboxStatus.show_names==true && match.key === "name" && !fileIDs.includes(result.model['unique_id'])){
+                    fileIDs.push(result.model['unique_id']);
+                    finalResults.push(result);
                 }
-                else if (checkboxStatus.show_descriptions==true && results[index].matches[index2].key === "description" && !fileIDs.includes(results[index].model['unique_id'])){
-                    fileIDs.push(results[index].model['unique_id']);
-                    resultsWithDescriptionFilter.push(results[index]);
+                else if (checkboxStatus.show_descriptions==true && match.key === "description" && !fileIDs.includes(result.model['unique_id'])){
+                    fileIDs.push(result.model['unique_id']);
+                    finalResults.push(result);
                 }
-                else if (checkboxStatus.show_columns==true && results[index].matches[index2].key === "columns" && !fileIDs.includes(results[index].model['unique_id'])){
-                    fileIDs.push(results[index].model['unique_id']);
-                    resultsWithColumnFilter.push(results[index])
+                else if (checkboxStatus.show_columns==true && match.key === "columns" && !fileIDs.includes(result.model['unique_id'])){
+                    fileIDs.push(result.model['unique_id']);
+                    finalResults.push(result);
                 }
-            }
-            // console.log(results[index].model['raw_sql'].search($scope.search.query));
-            // console.log(results[index].model['raw_sql'].search($scope.search.query)!=-1);
-            // console.log("*result itself*\n", results[index])
-            // console.log("*raw_sql of result*\n", results[index].model['raw_sql']);
-            // if(results[index].model['fqn'][2] != "seeds")
-            //     console.log("*index of search found*\n", results[index].model['raw_sql'].search($scope.search.query));
-            if (checkboxStatus.show_code==true && results[index].model['resource_type'] != "source" && results[index].model['raw_sql'].search($scope.search.query)!=-1 && !fileIDs.includes(results[index].model['unique_id'])){
-                console.log("we found a code match\n", results[index].model['raw_sql']);
-                fileIDs.push(results[index].model['unique_id']);
-                resultsWithCodeFilter.push(results[index]);
+            });
+            if (checkboxStatus.show_code==true && result.model['resource_type'] != "source" && result.model['raw_sql'].search($scope.search.query)!=-1 && !fileIDs.includes(result.model['unique_id'])){
+                fileIDs.push(result.model['unique_id']);
+                finalResults.push(result);
                 
             }
-       }
-       console.log("*resultsWithNameFilter*\n", resultsWithNameFilter);
-       console.log("*resultsWithDescriptionFilter*\n", resultsWithDescriptionFilter);
-       console.log("*resultsWithColumnFilter*\n", resultsWithCodeFilter);
-       console.log("*resultsWithCodeFilter*", resultsWithCodeFilter);
-       var ret = finalResults.concat(resultsWithNameFilter, resultsWithDescriptionFilter, resultsWithColumnFilter, resultsWithCodeFilter);
-       console.log("*ret*", ret);
-       return ret;
+       });
+       return finalResults;
     }
-    $scope.$watch('search.query', function(q) {
-        //$scope.search.results = projectService.search(q);
-        let filteredResults = $scope.filterResults(projectService.search(q), $scope.checkboxStatus);
+
+    var watchExpressions = ['search.query', 'checkboxStatus.show_names', 'checkboxStatus.show_descriptions', 'checkboxStatus.show_columns', 'checkboxStatus.show_code'];
+    $scope.$watchGroup(watchExpressions, function() {
+        let filteredResults = $scope.filterResults(projectService.search($scope.search.query), $scope.checkboxStatus);
         $scope.search.results = filteredResults;
     });
-
 
     /*
     INITIALIZE THE APPLICATION:
