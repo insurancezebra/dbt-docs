@@ -149,41 +149,31 @@ angular
         }
     });
 
-    $scope.filterResults = function (results, checkboxStatus){
+    function filterResults(results, checkboxStatus){
         if(!_.some(_.values(checkboxStatus))){
             return results;
         }
 
         let finalResults = [];
         let fileIDs = [];
-
+        
+        const {show_names, show_descriptions, show_columns, show_code} = checkboxStatus;
         _.each(results, function(result){
             _.each(result.matches, function(match){
-                if (checkboxStatus.show_names==true && match.key === "name" && !fileIDs.includes(result.model['unique_id'])){
+               if(!fileIDs.includes(result.model['unique_id'])){
+                   if((show_names && match.key === "name") || (show_descriptions && match.key === "description") || (show_columns && match.key === "columns") || (show_code && match.key === "raw_sql")){
                     fileIDs.push(result.model['unique_id']);
                     finalResults.push(result);
-                }
-                else if (checkboxStatus.show_descriptions==true && match.key === "description" && !fileIDs.includes(result.model['unique_id'])){
-                    fileIDs.push(result.model['unique_id']);
-                    finalResults.push(result);
-                }
-                else if (checkboxStatus.show_columns==true && match.key === "columns" && !fileIDs.includes(result.model['unique_id'])){
-                    fileIDs.push(result.model['unique_id']);
-                    finalResults.push(result);
-                }
+                   }
+               }
             });
-            if (checkboxStatus.show_code==true && result.model['resource_type'] != "source" && result.model['raw_sql'].search($scope.search.query)!=-1 && !fileIDs.includes(result.model['unique_id'])){
-                fileIDs.push(result.model['unique_id']);
-                finalResults.push(result);
-                
-            }
        });
        return finalResults;
     }
 
     var watchExpressions = ['search.query', 'checkboxStatus.show_names', 'checkboxStatus.show_descriptions', 'checkboxStatus.show_columns', 'checkboxStatus.show_code'];
     $scope.$watchGroup(watchExpressions, function() {
-        let filteredResults = $scope.filterResults(projectService.search($scope.search.query), $scope.checkboxStatus);
+        let filteredResults = filterResults(projectService.search($scope.search.query), $scope.checkboxStatus);
         $scope.search.results = filteredResults;
     });
 
