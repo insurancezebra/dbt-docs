@@ -49,7 +49,7 @@
                         <label for="column" style="margin-right:25px;">Column</label> 
                         <input type="checkbox" id="code" ng-model="checkboxStatus.show_code" ng-click = "filterResults(results, checkboxStatus)" style = "margin-right:5px">
                         <label for="code" style="margin-right:15px;">SQL</label>
-                        <div class="app-body">
+                    <div class="app-body">
                     </div>
                     <div class="app-footer app-icn" ng-show="search.is_focused" ng-click="clearSearch()">
                         <svg class="icn icn-md"><use xlink:href="#icn-close"></use></svg>
@@ -59,8 +59,6 @@
             <div class='app-body' ng-show='!search.is_focused' ui-view></div>
             <div class="app-body" ng-show="search.is_focused">
                 <docs-search query="search.query" results="search.results" on-select="clearSearch()"></docs-search>
-                <div class = "sub-results"> 
-                </div>
             </div>
         </div>
     </div>
